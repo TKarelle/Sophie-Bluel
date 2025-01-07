@@ -1,0 +1,47 @@
+main{
+    display: flex;
+    justify-content: center;
+}
+#login-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    width: 768px;
+    max-width: 100%;
+    min-height: 480px;
+}
+
+#login-form{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+#login-btn{
+    background-color: #1D6154;
+    color: white;
+    border-radius: 15px;
+    padding: 5px;
+    width: 150px;
+}
+
+#forgetpassword{
+    color: inherit;
+}
+
+.input-container{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+input{
+    border: transparent;
+    height: 40px;
+    width: 300px;
+    box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+}
