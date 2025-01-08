@@ -45,7 +45,7 @@ function setupFilters() {
     const categorySelect = document.getElementById("modal_picture-category");
     const categoriesArray = [{ id: "Tous", name: "Tous" }, ...allCategories];
 
-    filterContainer.innerHTML = ""; // Réinitialiser le conteneur des filtres
+    filterContainer.innerHTML = ""; 
     categoriesArray.forEach(category => {
         const filterItem = document.createElement('p');
         filterItem.textContent = category.name;
@@ -68,9 +68,9 @@ function setupFilters() {
 // Fonction de filtrage par catégorie
 function filterByCategory(categoryId) {
     if (categoryId === "Tous") {
-        return allProjects; // Retourne tous les projets
+        return allProjects; 
     }
-    return allProjects.filter(project => project.categoryId === categoryId); // Filtre par catégorie
+    return allProjects.filter(project => project.categoryId === categoryId); 
 }
 
 // Vérifier si l'utilisateur est connecté
@@ -84,18 +84,18 @@ function updatePortfolio() {
     const logIn = document.getElementById("login");
     const modifyPortfolio = document.getElementById("portfolio_modify");
     if (isLoggedIn()) {
-        modifyPortfolio.style.display = "block"; // Affiche la section protégée
-        logIn.textContent = "Logout"; // Change le texte en "Logout"
+        modifyPortfolio.style.display = "block"; 
+        logIn.textContent = "Logout"; 
     } else {
-        modifyPortfolio.style.display = "none"; // Cache la section protégée
-        logIn.textContent = "Login"; // Change le texte en "Login"
+        modifyPortfolio.style.display = "none"; 
+        logIn.textContent = "Login"; 
     }
 }
 
 // Fonction de déconnexion
 function logout() {
-    localStorage.removeItem("authToken"); // Supprime le token
-    updatePortfolio(); // Met à jour l'interface
+    localStorage.removeItem("authToken"); 
+    updatePortfolio(); 
 }
 
 // === Événements ===
@@ -118,7 +118,7 @@ function galleryModal(data) {
     galleryModalContainer.innerHTML = "";
 
     data.forEach((project) => {
-        const imageElement = document.createElement("div"); // Crée un élément image
+        const imageElement = document.createElement("div"); 
         imageElement.innerHTML = `
             <img src="${project.imageUrl}" alt="${project.title}">
             <button type="button" class="delete-btn" data-id="${project.id}">
@@ -133,15 +133,16 @@ function galleryModal(data) {
     const deleteButtons = document.querySelectorAll(".delete-btn");
     deleteButtons.forEach((button) => {
         button.addEventListener("click", () => {
-            const projectId = button.getAttribute("data-id"); // Récupérer l'ID de la photo
-            deleteProject(projectId); // Appeler la fonction de suppression
+            const projectId = button.getAttribute("data-id"); 
+            deleteProject(projectId); 
         });
     });
 }
 
 //Fonction pour supprimé des projets
 function deleteProject(projectId) {
-    const token = localStorage.getItem("authToken"); // Récupérer le token
+
+    const token = localStorage.getItem("authToken"); 
 
     if (!token) {
         alert("Vous devez être connecté pour effectuer cette action.");
@@ -151,7 +152,7 @@ function deleteProject(projectId) {
     fetch(`http://localhost:5678/api/works/${projectId}`, {
         method: "DELETE",
         headers: {
-            Authorization: `Bearer ${token}`, // Envoyer le token dans l'en-tête
+            Authorization: `Bearer ${token}`, 
         },
     })
         .then((response) => {
@@ -162,14 +163,19 @@ function deleteProject(projectId) {
             if (!response.ok) {
                 throw new Error("Erreur lors de la suppression de la photo");
             }
-            
+            // Récupérer l'élément DOM du projet à supprimer
+            const projectElement = document.getElementById(`project-${projectId}`);
+            if (projectElement) {
+                projectElement.remove(); 
+            }
+
             // Mettre à jour la galerie après suppression
-            return fetch('http://localhost:5678/api/works'); // Récupérer à nouveau les projets
+            return fetch('http://localhost:5678/api/works'); 
         })
         .then((response) => response.json())
         .then((updatedProjects) => {
-            allProjects = updatedProjects; // Mettre à jour les données locales
-            galleryModal(allProjects); // Réactualiser la galerie modale
+            allProjects = updatedProjects; 
+            galleryModal(allProjects); 
         })
         .catch((error) => console.error("Erreur :", error));
 }
@@ -185,7 +191,7 @@ document.querySelector('form').addEventListener('submit', (event) => {
     if (!title || !category || !file) {
     
         alert("Tous les champs sont obligatoires.");
-        return; // On arrête ici si les champs sont vides
+        return; 
     }
 
     if (file.size > 4 * 1024 * 1024) {
@@ -193,9 +199,9 @@ document.querySelector('form').addEventListener('submit', (event) => {
         return;
     }
 
+    
+    const formData = new FormData(event.target);
     event.preventDefault();
-    const formData = new FormData(event.target);//Crée un objet FormData à partir du formulaire (cela permet de préparer les données pour l'envoi avec fetch).
-
     fetch('http://localhost:5678/api/works', {
         method: 'POST',
         headers: {
@@ -209,23 +215,24 @@ document.querySelector('form').addEventListener('submit', (event) => {
     })
     .then(newProject => {
         allProjects.push(newProject);
-        afficherProject(allProjects); // Mise à jour de la galerie principale
+        afficherProject(allProjects); 
     })
+    
     .catch(error => console.error('Erreur:', error));
     
 });
 
 //Ajout d'un aperçu de  l'image 
-document.getElementById("image_input").addEventListener("change", (event) => { //event = (l'élément sur lequel l'événement a été déclenché).
-    const file = event.target.files[0]; // Récupère le fichier sélectionné; target = fait référence à l'élément qui a déclenché l'événement, file FileList, ce qui est un tableau-like d'objets File. Chaque objet File représente un fichier sélectionné.
+document.getElementById("image_input").addEventListener("change", (event) => { 
+    const file = event.target.files[0]; 
     const previewContainer = document.getElementById("image_preview");
-    previewContainer.innerHTML = ""; // Efface l'ancien aperçu
+    previewContainer.innerHTML = ""; 
 
     if (file) {
-        const reader = new FileReader();//fichier sélectionné en tant qu'URL de données (base64).
-        reader.onload = function (e) {//onload : Cet événement est déclenché lorsque la lecture du fichier est terminée avec succès.
-            const img = document.createElement("img");//la variable e représente l'événement qui est déclenché lorsque la lecture du fichier est terminée avec succès.
-            img.src = e.target.result;//Lorsque l'événement load est déclenché, result contient le résultat de la lecture du fichier. Cela peut être un base64 pour une image
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            const img = document.createElement("img");
+            img.src = e.target.result;
             img.classList.add("preview_img");
             previewContainer.appendChild(img);
         };
@@ -235,24 +242,47 @@ document.getElementById("image_input").addEventListener("change", (event) => { /
     }
 });
 
-document.getElementById('showModal').addEventListener("click", () =>{
-    const showModal = document.getElementById("modal");
-    showModal.classList.toggle("modal_none");//Visible
+// Ajout de l'écouteur d'événement pour ouvrir le modal
+document.getElementById('showModal').addEventListener("click", () => {
+    const modal = document.getElementById("modal");
+    modal.classList.toggle("modal_none");  
 });
 
-document.getElementById('close-btn').addEventListener("click", () => {
+// Fonction de bascule pour ouvrir/fermer le modal
+function closeModal() {
     const modal = document.getElementById("modal");
     const modalContent = document.getElementById("modal_content");
     const modalAddPicture = document.getElementById("modal_add-picture");
-    modal.classList.toggle("modal_none");//Masqué le modal   
+
+    // Bascule la visibilité du modal
+    modal.classList.toggle("modal_none");
+
+    // Modifie les classes des éléments à l'intérieur du modal
     modalAddPicture.classList.remove("modal_add-picture");
     modalAddPicture.classList.add("modal_add-picture-none");
     modalContent.classList.add("modal_content");
     modalContent.classList.remove("modal_content-none");
+
+    // Efface l'ancien aperçu de l'image
     const previewContainer = document.getElementById("image_preview");
     previewContainer.innerHTML = ""; // Efface l'ancien aperçu
+}
 
+// Ajoute l'écouteur d'événement sur le bouton de fermeture
+document.getElementById('close-btn').addEventListener("click", () => {
+    closeModal();  
 });
+
+// Ajoute un écouteur d'événement sur la fenêtre pour fermer le modal si l'utilisateur clique en dehors du modal
+window.addEventListener("click", (event) => {
+    const modal = document.getElementById("modal");
+
+    
+    if (!modal.classList.contains("modal_none") && !modal.contains(event.target) && !event.target.matches('#close-btn') && !event.target.matches('#showModal')) {
+        closeModal();  
+    }
+});
+
 
 document.getElementById('add-btn').addEventListener("click", () =>{
     const modalContent = document.getElementById("modal_content");

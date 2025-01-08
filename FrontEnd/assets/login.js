@@ -1,5 +1,5 @@
 document.getElementById("login-form").addEventListener("submit", (event) => {
-    event.preventDefault(); // Empêche le rechargement de la page
+    event.preventDefault(); 
 
     // Récupérer les données du formulaire
     const email = document.getElementById("email").value;
@@ -21,7 +21,7 @@ document.getElementById("login-form").addEventListener("submit", (event) => {
     })
         .then(response => {
             if (response.ok) {
-                return response.json(); // Convertir la réponse en JSON
+                return response.json(); 
             } else {
                 throw new Error("Email ou mot de passe incorrect");
             }
@@ -29,10 +29,10 @@ document.getElementById("login-form").addEventListener("submit", (event) => {
         .then(data => {
             // Si le token est présent, la connexion est réussie
             if (data.token) {
-                localStorage.setItem("authToken", data.token); // Sauvegarder le token
+                localStorage.setItem("authToken", data.token); 
                 console.log(localStorage.getItem("authToken"));
                 alert("Connexion réussie !");
-                window.location.href = "index.html"; // Rediriger vers une autre page
+                window.location.href = "index.html"; 
             }
         })
         .catch(error => console.error('Erreur lors de la récupération des données :', error));
